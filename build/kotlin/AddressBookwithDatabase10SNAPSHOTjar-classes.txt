@@ -1,0 +1,1 @@
+/home/hamzam/IdeaProjects/AddressBookwithDatabase/build/classes/kotlin/main/Cities.class:/home/hamzam/IdeaProjects/AddressBookwithDatabase/build/classes/kotlin/main/MainKt$main$1$stPeteId$1.class:/home/hamzam/IdeaProjects/AddressBookwithDatabase/build/classes/kotlin/main/MainKt$main$1.class:/home/hamzam/IdeaProjects/AddressBookwithDatabase/build/classes/kotlin/main/MainKt.class
