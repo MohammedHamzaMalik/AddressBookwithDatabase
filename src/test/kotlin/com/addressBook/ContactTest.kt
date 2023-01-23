@@ -3,10 +3,14 @@ package com.addressBook
 import com.addressBook.entryPoints.addContact
 //import com.addressBook.TestUtils.getDeleteContactCommand
 import com.commandPattern.addressBook.commands.AddressBook
+import com.commandPattern.addressBook.requests.EditContactRequest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class ContactTest: AppTest() {
+
+//    var random: Int
+
     @Test
     fun `add contact`() {
         val req = getAddContactRequest()
@@ -31,14 +35,16 @@ class ContactTest: AppTest() {
 //        val deletedContactResponse = obj.executeCommand(DeleteContactCommand(getDeleteContactCommand(contactResponse.contactId))) as Contact
 //        Assertions.assertEquals("Hamza", deletedContactResponse.firstName)
 //    }
-//    @Test
-//    fun `edit contact`() {
-//        val obj = AddressBook()
-//        val contactResponse = obj.executeCommand(AddContactCommand(getAddContactRequest())) as Contact
-//
+    @Test
+    fun `edit contact`() {
+
+        val req = getAddContactRequest()
+        val contactResponse = addContact(appCtx, req)
+        val editedReq = getEditContactRequest()
+
 //        val editedContactResponse = obj.executeCommand(EditContactCommand(contactResponse.contactId,
 //            getEditContactRequest())) as Contact
-//        Assertions.assertEquals("Hamza", editedContactResponse.firstName)
+        Assertions.assertEquals("Mohammed", editedReq.firstName)
 //        val editContactRequest = EditContactRequest(
 //            contactResponse.contactId,
 //            "Zayn",
@@ -51,5 +57,5 @@ class ContactTest: AppTest() {
 //        val editContactCommand = EditContactCommand(contactResponse.contactId, editContactRequest)
 //        val editedContactResponse = editContactCommand.execute() as Contact
 //        Assertions.assertEquals("John", editedContactResponse.firstName)
-//    }
+    }
 }

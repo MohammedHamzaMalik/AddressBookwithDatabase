@@ -7,20 +7,11 @@ import com.commandPattern.addressBook.requests.AddContactRequest
 import com.commandPattern.addressBook.requests.AddGroupRequest
 import com.commandPattern.addressBook.requests.EditContactRequest
 import com.commandPattern.addressBook.requests.EditGroupRequest
+import com.commandPattern.addressBook.storages.Storage
+import com.commandPattern.addressBook.storages.Storage.Contacts.contactId
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-
-object Contacts : Table() {
-    val contactId = uuid("contact_id").autoGenerate()
-    val firstName = varchar("first_name", length = 100)
-    val lastName = varchar("last_name", length = 100)
-    val email = varchar("email", length = 100)
-    val phoneNumber = varchar("phone_number", length = 15)
-    val address = varchar("address", length = 255)
-    val groupName = varchar("group_name", length = 100)
-
-    override val primaryKey = PrimaryKey(contactId, name = "PK_Contact_ID")
-}
+import java.util.*
 
 
 fun main(args: Array<String>) {
@@ -31,6 +22,59 @@ fun main(args: Array<String>) {
     val password = "password"
     Database.connect(url, driver, username, password)
 
+    val obj = AddressBook()
+
+    val hamza = Contact(
+        contactId = UUID.randomUUID(),
+        firstName = "Hamza",
+        lastName = "Malik",
+        emails = mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
+        phoneNumbers = mutableMapOf("work" to "+91 123","home" to "+91 234"),
+        addresses = mutableMapOf("HOME" to "ST","WORK" to "BRC"),
+        groups = mutableListOf("Vayana","PDPU")
+    )
+
+    DatabaseFactory.getInstance().use {
+        it.transaction {
+            val contactId = Contacts.insert {
+                it[this.contactId] = hamza.contactId
+                it[firstName] = hamza.firstName
+                it[lastName] = hamza.lastName
+            } get Contacts.contactId
+
+            hamza.emails.forEach { (type, email) ->
+                Emails.insert {
+                    it[Contacts.contactId] = contactId
+                    it[this.type] = type
+                    it[email] = email
+                }
+            }
+            hamza.phoneNumbers.forEach { (type, phoneNumber) ->
+                PhoneNumbers.insert {
+                    it[Contacts.contactId] = contactId
+                    it[this.type] = type
+                    it[phoneNumber] = phoneNumber
+                }
+            }
+            hamza.addresses.forEach { (type, address) ->
+                Addresses.insert {
+                    it[Contacts.contactId] = contactId
+                    it[this.type] = type
+                    it[address] = address
+                }
+            }
+            hamza.groups.forEach { groupName ->
+                val groupId = Groups.insert {
+                    it[name] = groupName
+                } get Groups.groupId
+
+                ContactGroup.insert {
+                    it[Contacts.contactId] = contactId
+                    it[Groups.groupId] = groupId
+                }
+            }
+        }
+    }
 
 //    transaction {
 //        SchemaUtils.create(Contacts)
