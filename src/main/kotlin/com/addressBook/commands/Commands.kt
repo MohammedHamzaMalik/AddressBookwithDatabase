@@ -24,15 +24,15 @@ class AddContactCommand(
     val cmdCtx: CommandContext,
     private val requests: AddContactRequest
 ): Command {
-    override fun execute(): Contact = Storage.addContact(requests.toContact())
+    override fun execute(): Contact = Storage.addContactInTable(requests.toContact())
 }
 
 class DeleteContactCommand(
+    val cmdCtx: CommandContext,
     private val contactId: UUID
-//    private val query: String
 ): Command {
     override fun execute(): String {
-        return Storage.deleteContact(contactId)
+        return Storage.deleteContactInTable(contactId)
     }
 }
 

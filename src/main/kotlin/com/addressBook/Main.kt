@@ -1,96 +1,62 @@
 package com.commandPattern.addressBook
 
-import com.addressBook.CommandContext
-import com.addressBook.tables.*
+import com.addressBook.AppContext
+import com.addressBook.AppMain
+import com.addressBook.connectToDatabase
+import com.addressBook.entryPoints.addContact
+import com.addressBook.entryPoints.deleteContact
+import com.addressBook.resetDatabase
 import com.commandPattern.addressBook.commands.*
-import com.commandPattern.addressBook.dataClasses.Contact
 import com.commandPattern.addressBook.requests.AddContactRequest
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
 
 
 fun main(args: Array<String>) {
 
-    val url = "jdbc:mysql://localhost:3306/addressbook_db"
-    val driver = "com.mysql.cj.jdbc.Driver"
-    val username = "hamza"
-    val password = "password"
-    val connection = Database.connect(url, driver, username, password)
-
-    transaction {
-        SchemaUtils.create(Contacts, PhoneNumbers, Emails, Addresses, Groups, GroupMembers)
-    }
-//    val contactId = UUID.randomUUID()
-//    val contact = Contact(
-//        contactId = contactId,
-//        firstName = "John",
-//        lastName = "Doe",
-//        phoneNumbers = mutableMapOf("work" to "+91 123", "home" to "+91 234"),
-//        emails = mutableMapOf("work" to "work@gmail.com", "home" to "home@gmail.com"),
-//        addresses = mutableMapOf("home" to "ST", "work" to "BRC"),
-//        groups = mutableListOf("Vayana", "PDPU")
-//    )
-
-//    transaction {
-//        SchemaUtils.create(Contacts)
-//        Contacts.insert {
-//            it[firstName] = "Hamza"
-//            it[lastName] = "Khan"
-//            it[email] = "work"
-//
-//        }
-//    }
+    connectToDatabase()
+    resetDatabase()
 
     val obj = AddressBook()
 
-    val hamza = obj.executeCommand(
-        AddContactCommand(
-            CommandContext(connection),
-            AddContactRequest(
-                "Hamza","Malik",
+    val hamza = addContact(
+        AppContext(connectToDatabase()),
+        AddContactRequest(
+            "Hamza", "Malik",
                 mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
                 mutableMapOf("work" to "+91 123","home" to "+91 234"),
                 mutableMapOf("HOME" to "ST","WORK" to "BRC"),
                 mutableListOf("Vayana","PDPU")
             )
-        )
-    ) as Contact
+    )
 
-    val zayn = obj.executeCommand(
-        AddContactCommand(
-            CommandContext(connection),
-            AddContactRequest("Hamza","Khan",
-                mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
-                mutableMapOf("work" to "+91 123","home" to "+91 234"),
-                mutableMapOf("HOME" to "ST","WORK" to "BRC"),
-                mutableListOf("Vayana")
-            )
+    val zayn = addContact(
+        AppContext(connectToDatabase()),
+        AddContactRequest("Hamza","Khan",
+            mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
+            mutableMapOf("work" to "+91 123","home" to "+91 234"),
+            mutableMapOf("HOME" to "ST","WORK" to "BRC"),
+            mutableListOf("Vayana")
         )
-    ) as Contact
+    )
 
-    val shivam = obj.executeCommand(
-        AddContactCommand(
-            CommandContext(connection),
-            AddContactRequest("Shivam","Chavda",
-                mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
-                mutableMapOf("work" to "+91 123","home" to "+91 234"),
-                mutableMapOf("HOME" to "ST","WORK" to "BRC"),
-                mutableListOf("Vayana","Navrachna")
-            )
+    val shivam = addContact(
+        AppContext(connectToDatabase()),
+        AddContactRequest("Shivam","Chavda",
+            mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
+            mutableMapOf("work" to "+91 123","home" to "+91 234"),
+            mutableMapOf("HOME" to "ST","WORK" to "BRC"),
+            mutableListOf("Vayana","Navrachna")
         )
-    ) as Contact
+    )
 
-    val parth = obj.executeCommand(
-        AddContactCommand(
-            CommandContext(connection),
-            AddContactRequest("Parth","Raval",
-                mutableMapOf("work" to "parthwork@gmail.com","home" to "parthhome@gmail.com"),
-                mutableMapOf("work" to "+91 789","home" to "+91 765"),
-                mutableMapOf("HOME" to "BV","WORK" to "BRC"),
-                mutableListOf("Vayana","PDPU")
-            )
+    val parth = addContact(
+        AppContext(connectToDatabase()),
+        AddContactRequest("Parth","Raval",
+            mutableMapOf("work" to "parthwork@gmail.com","home" to "parthhome@gmail.com"),
+            mutableMapOf("work" to "+91 789","home" to "+91 765"),
+            mutableMapOf("HOME" to "BV","WORK" to "BRC"),
+            mutableListOf("Vayana","PDPU")
         )
-    ) as Contact
+    )
 
 
 //    println("------------------------Contacts---------------------------")
@@ -107,7 +73,10 @@ fun main(args: Array<String>) {
 //
 //
 //    println("------------------------Contact Deleted--------------------------")
-//    val deletedContact = obj.executeCommand(DeleteContactCommand(hamza.contactId))
+    val deleteContact = deleteContact(
+        AppContext(connectToDatabase()),
+        hamza.contactId
+    )
 //    println(deletedContact)
 //    println()
 //

@@ -1,12 +1,10 @@
 package com.commandPattern.addressBook.storages
 
-import com.addressBook.tables.Addresses
-import com.addressBook.tables.Contacts
-import com.addressBook.tables.Emails
-import com.addressBook.tables.PhoneNumbers
+import com.addressBook.tables.*
 import com.commandPattern.addressBook.dataClasses.Contact
 import com.commandPattern.addressBook.dataClasses.Group
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
@@ -15,7 +13,7 @@ object Storage {
     private val contacts: MutableMap<UUID, Contact> = mutableMapOf()
     private val groups: MutableMap<UUID, Group> = mutableMapOf()
 
-    fun addContact(contact: Contact): Contact {
+    fun addContactInTable(contact: Contact): Contact {
 //        val group = contact.groups
         transaction {
             Contacts.insert {
@@ -45,11 +43,11 @@ object Storage {
                     it[address] = addressValue
                 }
             }
-//            Groups.insert {
-//                it[contactId] = contact.contactId
-//                it[groupId] = UUID.randomUUID()
-//                it[groupName] = groupName
-//            }
+            Groups.insert {
+                it[contactId] = contact.contactId
+                it[groupId] = UUID.randomUUID()
+                it[groupName] = groupName
+            }
         }
 //        contacts[contact.contactId]=contact
 //        contact.groups.forEach { groupName ->
@@ -64,7 +62,15 @@ object Storage {
 //        }
         return contact
     }
-    fun deleteContact(contactId: UUID): String {
+    fun deleteContactInTable(contactId: UUID): String {
+        transaction {
+            PhoneNumbers.deleteWhere { PhoneNumbers.contactId eq contactId }
+            Emails.deleteWhere { Emails.contactId eq contactId }
+            Addresses.deleteWhere { Addresses.contactId eq contactId }
+            GroupMembers.deleteWhere { GroupMembers.contactId eq contactId }
+            Groups.deleteWhere { Groups.contactId eq contactId }
+            Contacts.deleteWhere { Contacts.contactId eq contactId }
+        }
         val contact = contacts[contactId]
         contact?.groups?.forEach { groupName ->
             val group = groups.values.find { it.groupName==groupName }
