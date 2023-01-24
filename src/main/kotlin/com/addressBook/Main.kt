@@ -1,17 +1,12 @@
 package com.commandPattern.addressBook
 
+import com.addressBook.CommandContext
+import com.addressBook.tables.*
 import com.commandPattern.addressBook.commands.*
 import com.commandPattern.addressBook.dataClasses.Contact
-import com.commandPattern.addressBook.dataClasses.Group
 import com.commandPattern.addressBook.requests.AddContactRequest
-import com.commandPattern.addressBook.requests.AddGroupRequest
-import com.commandPattern.addressBook.requests.EditContactRequest
-import com.commandPattern.addressBook.requests.EditGroupRequest
-import com.commandPattern.addressBook.storages.Storage
-import com.commandPattern.addressBook.storages.Storage.Contacts.contactId
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
 
 
 fun main(args: Array<String>) {
@@ -20,61 +15,21 @@ fun main(args: Array<String>) {
     val driver = "com.mysql.cj.jdbc.Driver"
     val username = "hamza"
     val password = "password"
-    Database.connect(url, driver, username, password)
+    val connection = Database.connect(url, driver, username, password)
 
-    val obj = AddressBook()
-
-    val hamza = Contact(
-        contactId = UUID.randomUUID(),
-        firstName = "Hamza",
-        lastName = "Malik",
-        emails = mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
-        phoneNumbers = mutableMapOf("work" to "+91 123","home" to "+91 234"),
-        addresses = mutableMapOf("HOME" to "ST","WORK" to "BRC"),
-        groups = mutableListOf("Vayana","PDPU")
-    )
-
-    DatabaseFactory.getInstance().use {
-        it.transaction {
-            val contactId = Contacts.insert {
-                it[this.contactId] = hamza.contactId
-                it[firstName] = hamza.firstName
-                it[lastName] = hamza.lastName
-            } get Contacts.contactId
-
-            hamza.emails.forEach { (type, email) ->
-                Emails.insert {
-                    it[Contacts.contactId] = contactId
-                    it[this.type] = type
-                    it[email] = email
-                }
-            }
-            hamza.phoneNumbers.forEach { (type, phoneNumber) ->
-                PhoneNumbers.insert {
-                    it[Contacts.contactId] = contactId
-                    it[this.type] = type
-                    it[phoneNumber] = phoneNumber
-                }
-            }
-            hamza.addresses.forEach { (type, address) ->
-                Addresses.insert {
-                    it[Contacts.contactId] = contactId
-                    it[this.type] = type
-                    it[address] = address
-                }
-            }
-            hamza.groups.forEach { groupName ->
-                val groupId = Groups.insert {
-                    it[name] = groupName
-                } get Groups.groupId
-
-                ContactGroup.insert {
-                    it[Contacts.contactId] = contactId
-                    it[Groups.groupId] = groupId
-                }
-            }
-        }
+    transaction {
+        SchemaUtils.create(Contacts, PhoneNumbers, Emails, Addresses, Groups, GroupMembers)
     }
+//    val contactId = UUID.randomUUID()
+//    val contact = Contact(
+//        contactId = contactId,
+//        firstName = "John",
+//        lastName = "Doe",
+//        phoneNumbers = mutableMapOf("work" to "+91 123", "home" to "+91 234"),
+//        emails = mutableMapOf("work" to "work@gmail.com", "home" to "home@gmail.com"),
+//        addresses = mutableMapOf("home" to "ST", "work" to "BRC"),
+//        groups = mutableListOf("Vayana", "PDPU")
+//    )
 
 //    transaction {
 //        SchemaUtils.create(Contacts)
@@ -86,54 +41,58 @@ fun main(args: Array<String>) {
 //        }
 //    }
 
-//    val obj = AddressBook()
+    val obj = AddressBook()
 
-//    val hamza = obj.executeCommand(
-//        AddContactCommand(
-//            AddContactRequest(
-//        "Hamza","Malik",
-//        mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
-//        mutableMapOf("work" to "+91 123","home" to "+91 234"),
-//        mutableMapOf("HOME" to "ST","WORK" to "BRC"),
-//        mutableListOf("Vayana","PDPU")
-//    )
-//        )
-//    ) as Contact
-//
-//    val zayn = obj.executeCommand(
-//        AddContactCommand(
-//        AddContactRequest("Hamza","Khan",
-//            mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
-//            mutableMapOf("work" to "+91 123","home" to "+91 234"),
-//            mutableMapOf("HOME" to "ST","WORK" to "BRC"),
-//            mutableListOf("Vayana")
-//        )
-//        )
-//    ) as Contact
-//
-//    val shivam = obj.executeCommand(
-//        AddContactCommand(
-//            AddContactRequest("Shivam","Chavda",
-//        mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
-//        mutableMapOf("work" to "+91 123","home" to "+91 234"),
-//        mutableMapOf("HOME" to "ST","WORK" to "BRC"),
-//        mutableListOf("Vayana","Navrachna")
-//    )
-//        )
-//    ) as Contact
-//
-//    val parth = obj.executeCommand(
-//        AddContactCommand(
-//            AddContactRequest("Parth","Raval",
-//        mutableMapOf("work" to "parthwork@gmail.com","home" to "parthhome@gmail.com"),
-//        mutableMapOf("work" to "+91 789","home" to "+91 765"),
-//        mutableMapOf("HOME" to "BV","WORK" to "BRC"),
-//        mutableListOf("Vayana","PDPU")
-//    )
-//        )
-//    ) as Contact
-//
-//
+    val hamza = obj.executeCommand(
+        AddContactCommand(
+            CommandContext(connection),
+            AddContactRequest(
+                "Hamza","Malik",
+                mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
+                mutableMapOf("work" to "+91 123","home" to "+91 234"),
+                mutableMapOf("HOME" to "ST","WORK" to "BRC"),
+                mutableListOf("Vayana","PDPU")
+            )
+        )
+    ) as Contact
+
+    val zayn = obj.executeCommand(
+        AddContactCommand(
+            CommandContext(connection),
+            AddContactRequest("Hamza","Khan",
+                mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
+                mutableMapOf("work" to "+91 123","home" to "+91 234"),
+                mutableMapOf("HOME" to "ST","WORK" to "BRC"),
+                mutableListOf("Vayana")
+            )
+        )
+    ) as Contact
+
+    val shivam = obj.executeCommand(
+        AddContactCommand(
+            CommandContext(connection),
+            AddContactRequest("Shivam","Chavda",
+                mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
+                mutableMapOf("work" to "+91 123","home" to "+91 234"),
+                mutableMapOf("HOME" to "ST","WORK" to "BRC"),
+                mutableListOf("Vayana","Navrachna")
+            )
+        )
+    ) as Contact
+
+    val parth = obj.executeCommand(
+        AddContactCommand(
+            CommandContext(connection),
+            AddContactRequest("Parth","Raval",
+                mutableMapOf("work" to "parthwork@gmail.com","home" to "parthhome@gmail.com"),
+                mutableMapOf("work" to "+91 789","home" to "+91 765"),
+                mutableMapOf("HOME" to "BV","WORK" to "BRC"),
+                mutableListOf("Vayana","PDPU")
+            )
+        )
+    ) as Contact
+
+
 //    println("------------------------Contacts---------------------------")
 //    val allContacts = obj.executeCommand(ShowContactCommand()) as Collection<Contact>
 //    for (contact in allContacts) {
