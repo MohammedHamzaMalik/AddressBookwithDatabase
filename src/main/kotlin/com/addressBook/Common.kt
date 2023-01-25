@@ -7,10 +7,10 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
 
-internal fun connectToDatabase(): Database =
+fun connectToDatabase(): Database =
     Database.connect(
         HikariDataSource().apply {
-            jdbcUrl = "jdbc:mysql://localhost:3306/addressbook_db"
+            jdbcUrl = "jdbc:mysql://localhost:3306/address_book"
             username = "hamza"
             password = "password"
             isAutoCommit = false
@@ -27,7 +27,7 @@ val schema = listOf<Table>(
     GroupMembers
 )
 
-internal fun resetDatabase() {
+fun resetDatabase() {
     transaction {
         SchemaUtils.drop(*schema.toTypedArray())
         SchemaUtils.create(*schema.toTypedArray())

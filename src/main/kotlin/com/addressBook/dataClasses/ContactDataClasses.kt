@@ -12,8 +12,3 @@ data class Contact(
     val groups: MutableList<String>
 )
 
-data class Group(
-    val groupId: UUID,
-    val groupName: String,
-    val groupMembers: MutableList<Contact>
-)

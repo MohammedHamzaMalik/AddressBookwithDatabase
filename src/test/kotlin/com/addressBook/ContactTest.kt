@@ -1,6 +1,6 @@
 package com.addressBook
 
-import com.addressBook.entryPoints.addContactENT
+import com.addressBook.entryPoints.addContact
 //import com.addressBook.TestUtils.getDeleteContactCommand
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -12,7 +12,7 @@ class ContactTest: AppTest() {
     @Test
     fun `add contact`() {
         val req = getAddContactRequest()
-        val contactResponse = addContactENT(appCtx, req)
+        val contactResponse = addContact(appCtx, req)
 //        val contactResponse = obj.executeCommand(AddContactCommand(getAddContactRequest())) as Contact
 //        val addContactRequest = getAddContactRequest()
 //        val addContactCommand = AddContactCommand(addContactRequest)

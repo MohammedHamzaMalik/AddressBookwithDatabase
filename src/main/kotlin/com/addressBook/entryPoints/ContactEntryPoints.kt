@@ -4,7 +4,7 @@ import com.addressBook.AppContext
 import com.addressBook.CommandContext
 import com.commandPattern.addressBook.commands.*
 import com.commandPattern.addressBook.dataClasses.Contact
-import com.commandPattern.addressBook.requests.AddContactRequest
+import com.commandPattern.addressBook.requests.*
 import java.util.UUID
 
 fun addContact(
@@ -22,5 +22,15 @@ fun deleteContact(
 ): String {
     val cmdCtx = CommandContext(ac.db)
     val cmd = DeleteContactCommand(cmdCtx, contactId)
+    return cmd.execute()
+}
+
+fun editContact(
+    ac: AppContext,
+    contactId: UUID,
+    req: EditContactRequest
+): String {
+    val cmdCtx = CommandContext(ac.db)
+    val cmd = EditContactCommand(cmdCtx, contactId, req)
     return cmd.execute()
 }

@@ -1,22 +1,22 @@
 package com.commandPattern.addressBook
 
 import com.addressBook.AppContext
-import com.addressBook.AppMain
 import com.addressBook.connectToDatabase
-import com.addressBook.entryPoints.addContact
-import com.addressBook.entryPoints.deleteContact
+import com.addressBook.entryPoints.*
+import com.addressBook.requests.AddGroupMemberRequest
 import com.addressBook.resetDatabase
-import com.commandPattern.addressBook.commands.*
 import com.commandPattern.addressBook.requests.AddContactRequest
+import com.addressBook.requests.AddGroupRequest
+import com.addressBook.requests.EditGroupRequest
+import com.commandPattern.addressBook.requests.EditContactRequest
 
 
 fun main(args: Array<String>) {
-
     connectToDatabase()
     resetDatabase()
 
-    val obj = AddressBook()
 
+    println("------------------------Contacts Added---------------------------")
     val hamza = addContact(
         AppContext(connectToDatabase()),
         AddContactRequest(
@@ -59,122 +59,87 @@ fun main(args: Array<String>) {
     )
 
 
-//    println("------------------------Contacts---------------------------")
-//    val allContacts = obj.executeCommand(ShowContactCommand()) as Collection<Contact>
-//    for (contact in allContacts) {
-//        println("Contact Id: ${contact.contactId}")
-//        println("First Name: ${contact.firstName}")
-//        println("Last Name: ${contact.lastName}")
-//        println("Emails: ${contact.emails}")
-//        println("Phone Numbers: ${contact.phoneNumbers}")
-//        println("Addresses: ${contact.addresses}")
-//        println("Groups: ${contact.groups}\n")
-//    }
-//
-//
-//    println("------------------------Contact Deleted--------------------------")
+    println("------------------------Contact Deleted--------------------------")
     val deleteContact = deleteContact(
         AppContext(connectToDatabase()),
         hamza.contactId
     )
-//    println(deletedContact)
-//    println()
-//
-//
-//    println("------------------------Contact Edited----------------------------")
-//    val editedContact = obj.executeCommand(
-//        EditContactCommand(
-//        zayn.contactId,
-////        EditContactRequest(zayn.contactId,)
-//        EditContactRequest(zayn.contactId,
-//                        "Zayn",
-//                        "Malik",
-//                        zayn.emails,
-//                        zayn.phoneNumbers,
-//                        zayn.addresses,
-//                        mutableListOf("One Direction","PDPU"))
-//        )
-//    )
-//    println(editedContact)
-//    println()
-//
-//
+
+
+    println("------------------------Contact Edited----------------------------")
+    val editedContact = editContact(
+        AppContext(connectToDatabase()),
+        zayn.contactId,
+        EditContactRequest(
+            zayn.contactId,
+                        "Zayn",
+                        "Malik",
+                        zayn.emails,
+                        zayn.phoneNumbers,
+                        zayn.addresses,
+                        mutableListOf("One Direction","PDPU")
+        )
+    )
+
+
 //    println("---------------------------Searched Contacts------------------------")
-//    val searchedContacts = obj.executeCommand(SearchContactCommand("PDPU")) as List<Contact>
-//    for (contact in searchedContacts) {
-//        println("Contact Id: ${contact.contactId}")
-//        println("First Name: ${contact.firstName}")
-//        println("Last Name: ${contact.lastName}")
-//        println("Emails: ${contact.emails}")
-//        println("Phone Numbers: ${contact.phoneNumbers}")
-//        println("Addresses: ${contact.addresses}")
-//        println("Groups: ${contact.groups}\n")
-//    }
-//
-//
-//    println("--------------------------History of Commands Used----------------------------")
-//    println(obj.history.joinToString("\n"))
-//    println()
-//
-//
-//    val vayana = obj.executeCommand(
-//        AddGroupCommand(
-//        AddGroupRequest(
-//        "Vayana Interns",
-//        mutableListOf(hamza,parth,zayn)
-//    )
-//        )
-//    ) as Group
-//    val people = obj.executeCommand(
-//        AddGroupCommand(
-//        AddGroupRequest(
-//            "Peoples",
-//            mutableListOf(zayn,hamza,parth,shivam)
-//    )
-//        )
-//    ) as Group
-//
-//
-//    println("----------------------------Groups----------------------------")
-//    val allGroups = obj.executeCommand(ShowGroupsCommand()) as Collection<Group>
-//    for (group in allGroups) {
-//        println("Group Id: ${group.groupId}")
-//        println("Group Name: ${group.groupName}")
-//        println("Group Members: ${group.groupMembers}\n")
-//    }
-//    println()
-//
-//
-//    println("------------------------Group Deleted--------------------------")
-////    allGroups.forEach {
-////        println(it.value)
-////    }
-//    val deletedGroup = obj.executeCommand(DeleteGroupContact(people.groupId))
-//    println(deletedGroup)
-//    println()
-//
-//
-//    println("------------------------Group Edited----------------------------")
-//    val editedGroup = obj.executeCommand(
-//        EditGroupCommand(
-//        vayana.groupId,
-//        EditGroupRequest(vayana.groupId,
-//            "Vayana Intern",
-//            mutableListOf(shivam)
-//    )
-//        )
-//    )
-//    println(editedGroup)
-//    println()
-//
-//
+
+
+    println("----------------------------Groups----------------------------")
+    val vayana = addGroup(
+        AppContext(connectToDatabase()),
+        AddGroupRequest(
+            "Vayana"
+        )
+    )
+
+    val peoples = addGroup(
+        AppContext(connectToDatabase()),
+        AddGroupRequest(
+            "Peoples"
+        )
+    )
+
+    val pdpu = addGroup(
+        AppContext(connectToDatabase()),
+        AddGroupRequest(
+            "PDPU"
+        )
+    )
+
+
+    println("------------------------Group Deleted--------------------------")
+    val deleteGroup = deleteGroup(
+        AppContext(connectToDatabase()),
+        vayana.groupId
+    )
+
+
+    println("------------------------Group Edited----------------------------")
+    val editedGroup = editGroup(
+        AppContext(connectToDatabase()),
+        peoples.groupId,
+        EditGroupRequest(
+            peoples.groupId,
+            "Great Peoples"
+        )
+    )
+
+    println("------------------------Contact Added to Group----------------------------")
+    val parthToPdpu = addGroupMember(
+        AppContext(connectToDatabase()),
+        AddGroupMemberRequest(
+            pdpu.groupId,
+            parth.contactId
+        )
+    )
+    val shivamToPdpu = addGroupMember(
+        AppContext(connectToDatabase()),
+        AddGroupMemberRequest(
+            pdpu.groupId,
+            shivam.contactId
+        )
+    )
 //    println("---------------------------Searched Groups------------------------")
-//    val searchedGroup = obj.executeCommand(SearchGroupCommand("vayana")) as List<Group>
-//    for (group in searchedGroup) {
-//        println("Group Id: ${group.groupId}")
-//        println("Group Name: ${group.groupName}")
-//        println("Group Members: ${group.groupMembers}\n")
-//    }
-//    println("--------------------------History of Commands Used----------------------------")
-//    println(obj.history.joinToString("\n"))
+
 }

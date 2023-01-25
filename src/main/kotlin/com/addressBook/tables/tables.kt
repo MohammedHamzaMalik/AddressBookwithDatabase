@@ -1,10 +1,8 @@
 package com.addressBook.tables
 
 import org.jetbrains.exposed.sql.Table
-import com.addressBook.tables.GroupMembers.index
-import com.addressBook.tables.GroupMembers.references
 
-object Contacts : Table() {
+object Contacts : Table("contacts") {
     val contactId = uuid("contact_id").autoGenerate()
     val firstName = varchar("first_name", length = 100)
     val lastName = varchar("last_name", length = 100)
@@ -12,7 +10,7 @@ object Contacts : Table() {
     override val primaryKey = PrimaryKey(contactId, name = "PK_Contact_ID")
 }
 
-object PhoneNumbers: Table() {
+object PhoneNumbers: Table("phone_numbers") {
     val phoneNumberId = uuid("phone_number_id").autoGenerate()
     val contactId = (uuid("contact_id") references Contacts.contactId).index()
     val phoneNumberType = varchar("phone_number_type", length = 100)
@@ -20,7 +18,8 @@ object PhoneNumbers: Table() {
 
     override val primaryKey = PrimaryKey(phoneNumberId, name = "PK_PhoneNumber_ID")
 }
-object Emails: Table() {
+
+object Emails: Table("emails") {
     val emailId = uuid("email_id").autoGenerate()
     val contactId = (uuid("contact_id") references Contacts.contactId).index()
     val emailType = varchar("email_type", length = 100)
@@ -37,27 +36,11 @@ object Emails: Table() {
 //        }
 }
 
-object Addresses: Table() {
+object Addresses: Table("addresses") {
     val addressId = uuid("address_id").autoGenerate()
     val contactId = (uuid("contact_id") references Contacts.contactId).index()
     val addressType = varchar("address_type", length = 100)
     val address = varchar("address", length = 100)
 
     override val primaryKey = PrimaryKey(addressId, name = "PK_Address_ID")
-}
-
-object Groups: Table() {
-    val contactId = (uuid("contact_id") references Contacts.contactId).index()
-    val groupId = uuid("group_id").autoGenerate()
-    val groupName = varchar("group_name", length = 100)
-
-    override val primaryKey = PrimaryKey(groupId, name = "PK_Group_ID")
-}
-
-object GroupMembers: Table() {
-    val groupMemberId = uuid("group_member_id").autoGenerate()
-    val groupId = (uuid("group_id") references Groups.groupId).index()
-    val contactId = (uuid("contact_id") references Contacts.contactId).index()
-
-    override val primaryKey = PrimaryKey(groupMemberId, name = "PK_GroupMember_ID")
 }
