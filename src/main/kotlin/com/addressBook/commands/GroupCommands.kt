@@ -1,6 +1,7 @@
 package com.addressBook.commands
 
-import com.addressBook.CommandContext
+
+import CommandContext
 import com.addressBook.dataClasses.Group
 import com.addressBook.requests.AddGroupRequest
 import com.addressBook.requests.EditGroupRequest
@@ -44,16 +45,27 @@ class EditGroupCommand(
     }
 }
 
+class FetchGroupCommand(
+    val cmdCtx: CommandContext,
+    private val groupId: UUID
+): Command {
+    override fun execute(): Group {
+        return Storage.fetchGroupInTable(groupId)
+    }
+}
+/*
 class ShowGroupsCommand: Command {
     override fun execute(): Collection<Group> {
         return Storage.showGroups()
     }
 
 }
+*/
 
-
+/*
 class SearchGroupCommand(
     private val query: String
 ): Command {
     override fun execute(): List<Group> = Storage.searchGroups(query)
 }
+*/

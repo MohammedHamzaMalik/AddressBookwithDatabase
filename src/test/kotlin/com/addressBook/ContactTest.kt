@@ -1,38 +1,56 @@
 package com.addressBook
 
 import com.addressBook.entryPoints.addContact
-//import com.addressBook.TestUtils.getDeleteContactCommand
+import com.addressBook.entryPoints.deleteContact
+import com.addressBook.entryPoints.editContact
+import com.addressBook.entryPoints.fetchContact
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class ContactTest: AppTest() {
 
-//    var random: Int
-
     @Test
     fun `add contact`() {
         val req = getAddContactRequest()
         val contactResponse = addContact(appCtx, req)
-//        val contactResponse = obj.executeCommand(AddContactCommand(getAddContactRequest())) as Contact
-//        val addContactRequest = getAddContactRequest()
-//        val addContactCommand = AddContactCommand(addContactRequest)
-//        val contactResponse = addContactCommand.execute()
+        println(contactResponse)
 
         Assertions.assertEquals("Hamza", contactResponse.firstName)
         Assertions.assertEquals("Malik", contactResponse.lastName)
-//        Assertions.assertTrue(contactResponse.emails.containsValue("work@gmail.com"))
-//        Assertions.assertTrue(contactResponse.phoneNumbers.containsValue("+91 123"))
-//        Assertions.assertTrue(contactResponse.addresses.containsValue("ST"))
-//        Assertions.assertTrue(contactResponse.groups.contains("Vayana"))
+        Assertions.assertTrue(contactResponse.emails.containsValue("work@gmail.com"))
+        Assertions.assertTrue(contactResponse.phoneNumbers.containsValue("+91 123"))
+        Assertions.assertTrue(contactResponse.addresses.containsValue("ST"))
     }
 
-//    @Test
-//    fun `edit contact`() {
-//
-//        val req = getAddContactRequest()
-//        val contactResponse = addContact(appCtx, req)
-//        val editedReq = getEditContactRequest()
-//
-//        Assertions.assertEquals("Mohammed", editedReq.firstName)
-//    }
+    @Test
+    fun `fetch contact`() {
+        val req = getAddContactRequest()
+        val contactResponse = addContact(appCtx, req)
+        val fetchContactResponse = fetchContact(appCtx, contactResponse.contactId)
+        println(fetchContactResponse)
+
+        Assertions.assertEquals("Hamza", fetchContactResponse.firstName)
+    }
+
+    @Test
+    fun `edit contact`() {
+
+        val req = getAddContactRequest()
+        val contactResponse = addContact(appCtx, req)
+        val editedContactRequest = getEditContactRequest()
+        val editContactResponse = editContact(appCtx, contactResponse.contactId, editedContactRequest)
+        println(editContactResponse)
+
+        Assertions.assertEquals("Mohammed Hamza", editedContactRequest.firstName)
+    }
+
+    @Test
+    fun `delete contact`() {
+        val req = getAddContactRequest()
+        val contactResponse = addContact(appCtx, req)
+        val deleteContactResponse = deleteContact(appCtx, contactResponse.contactId)
+        println(deleteContactResponse)
+
+        Assertions.assertFalse(deleteContactResponse.toBoolean())
+    }
 }

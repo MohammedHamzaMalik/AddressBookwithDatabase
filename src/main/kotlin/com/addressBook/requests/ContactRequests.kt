@@ -7,8 +7,7 @@ data class AddContactRequest(
     val lastName: String,
     val emails: MutableMap<String, String>,
     val phoneNumbers: MutableMap<String, String>,
-    val addresses: MutableMap<String, String>,
-    val groups: MutableList<String>
+    val addresses: MutableMap<String, String>
 )
 
 data class EditContactRequest(
@@ -17,7 +16,6 @@ data class EditContactRequest(
     val lastName: String,
     val emails: MutableMap<String, String>,
     val phoneNumbers: MutableMap<String, String>,
-    val addresses: MutableMap<String, String>,
-    val groups: MutableList<String>
+    val addresses: MutableMap<String, String>
 )
 

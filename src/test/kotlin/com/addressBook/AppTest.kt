@@ -1,5 +1,6 @@
 package com.addressBook
 
+import AppContext
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 
@@ -16,11 +17,11 @@ open class AppTest {
             resetDatabase()
         }
 
-        @JvmStatic
-        @AfterAll
-        fun tearDown() {
-            println("---------------")
-            resetDatabase()
-        }
+//        @JvmStatic
+//        @AfterAll
+//        fun tearDown() {
+//            println("****************")
+//            resetDatabase()
+//        }
     }
 }

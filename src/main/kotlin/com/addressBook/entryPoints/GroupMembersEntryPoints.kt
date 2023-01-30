@@ -1,7 +1,7 @@
 package com.addressBook.entryPoints
 
-import com.addressBook.AppContext
-import com.addressBook.CommandContext
+import AppContext
+import CommandContext
 import com.addressBook.commands.AddGroupMemberCommand
 import com.addressBook.commands.DeleteGroupMemberCommand
 import com.addressBook.requests.AddGroupMemberRequest

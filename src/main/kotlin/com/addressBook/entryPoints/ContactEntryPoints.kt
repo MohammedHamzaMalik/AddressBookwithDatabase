@@ -1,7 +1,8 @@
 package com.addressBook.entryPoints
 
-import com.addressBook.AppContext
-import com.addressBook.CommandContext
+
+import AppContext
+import CommandContext
 import com.commandPattern.addressBook.commands.*
 import com.commandPattern.addressBook.dataClasses.Contact
 import com.commandPattern.addressBook.requests.*
@@ -32,5 +33,14 @@ fun editContact(
 ): String {
     val cmdCtx = CommandContext(ac.db)
     val cmd = EditContactCommand(cmdCtx, contactId, req)
+    return cmd.execute()
+}
+
+fun fetchContact(
+    ac: AppContext,
+    contactId: UUID
+): Contact {
+    val cmdCtx = CommandContext(ac.db)
+    val cmd = FetchContactCommand(cmdCtx, contactId)
     return cmd.execute()
 }

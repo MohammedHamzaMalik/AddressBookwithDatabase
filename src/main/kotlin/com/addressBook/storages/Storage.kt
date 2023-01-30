@@ -3,11 +3,9 @@ package com.commandPattern.addressBook.storages
 import com.addressBook.tables.*
 import com.commandPattern.addressBook.dataClasses.Contact
 import com.addressBook.dataClasses.Group
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import java.util.UUID
 
 object Storage {
@@ -18,9 +16,9 @@ object Storage {
 //        val group = contact.groups
         transaction {
             Contacts.insert {
-                it[contactId] = contact.contactId
-                it[firstName] = contact.firstName
-                it[lastName] = contact.lastName
+                it[this.contactId] = contact.contactId
+                it[this.firstName] = contact.firstName
+                it[this.lastName] = contact.lastName
             }
 
             contact.emails.forEach { (type, eml) ->
@@ -79,7 +77,7 @@ object Storage {
 //            }
 //        }
 //        contacts.remove(contactId)
-        return "Contact with first name as ${contactId} is deleted."
+        return "Contact with first name as $contactId is deleted."
     }
     fun editContactInTable(contactId: UUID, contact: Contact): String {
         transaction {
@@ -133,6 +131,33 @@ object Storage {
 //        }
         return "Contact with first name as ${contact.firstName} is edited."
     }
+    fun fetchContactInTable(contactId: UUID): Contact {
+        /*return Contacts.select { Contacts.contactId eq contactId }
+            .map { Contact(it[Contacts.contactId], it[Contacts.firstName], it[Contacts.lastName],
+                it[Emails.emailType], it[PhoneNumbers.phoneNumberType], it[Addresses.addressType]) }
+            .firstOrNull()
+        */
+        lateinit var contact: Contact
+        transaction {
+            val contactRow = Contacts.select { Contacts.contactId eq contactId }.firstOrNull()
+            if (contactRow != null) {
+                val firstName = contactRow[Contacts.firstName]
+                val lastName = contactRow[Contacts.lastName]
+                val emails = Emails.select { Emails.contactId eq contactId }.associate {
+                    it[Emails.emailType] to it[Emails.email]
+                }
+                val phoneNumbers = PhoneNumbers.select { PhoneNumbers.contactId eq contactId }.associate {
+                    it[PhoneNumbers.phoneNumberType] to it[PhoneNumbers.phoneNumber]
+                }
+                val addresses = Addresses.select { Addresses.contactId eq contactId }.associate {
+                    it[Addresses.addressType] to it[Addresses.address]
+                }
+                contact = Contact(contactId, firstName, lastName, emails.toMutableMap(), phoneNumbers.toMutableMap(),
+                    addresses.toMutableMap())
+            }
+        }
+        return contact
+    }
     fun searchContacts(query: String): List<Contact> {
         val searchedContacts: MutableList<Contact> = mutableListOf()
         for(contact in contacts){
@@ -143,8 +168,7 @@ object Storage {
                         "${contact.value.lastName.contains(query,ignoreCase = true)}").toBoolean() ||
                 contact.value.phoneNumbers.values.contains(query) ||
                 contact.value.addresses.values.contains(query) ||
-                contact.value.emails.values.contains(query) ||
-                contact.value.groups.contains(query)
+                contact.value.emails.values.contains(query)
             ) searchedContacts.add(contact.value)
         }
         return searchedContacts.toList()
@@ -248,9 +272,21 @@ object Storage {
     }
 
     fun deleteGroupMemberInTable(groupId: UUID, contactId: UUID): String {
-//        transaction {
-//            GroupMembers.deleteWhere { (GroupMembers.groupId eq groupId) and (GroupMembers.contactId eq contactId) }
-//        }
+        transaction {
+            GroupMembers.deleteWhere { (GroupMembers.groupId eq groupId) and (GroupMembers.contactId eq contactId) }
+        }
         return "Member with contact id $contactId is deleted from group with group id $groupId."
+    }
+
+    fun fetchGroupInTable(groupId: UUID): Group {
+        lateinit var group: Group
+        transaction {
+            val groupRow = Groups.select { Groups.groupId eq groupId }.firstOrNull()
+            if (groupRow != null) {
+                val groupName = groupRow[Groups.groupName]
+                group = Group(groupId, groupName)
+            }
+        }
+        return group
     }
 }

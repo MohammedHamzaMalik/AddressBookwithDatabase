@@ -1,6 +1,7 @@
 package com.commandPattern.addressBook.commands
 
-import com.addressBook.CommandContext
+
+import CommandContext
 import com.addressBook.commands.Command
 import com.commandPattern.addressBook.dataClasses.Contact
 import com.commandPattern.addressBook.requests.*
@@ -13,8 +14,7 @@ fun AddContactRequest.toContact() = Contact(
     lastName = this@toContact.lastName,
     emails = this@toContact.emails,
     phoneNumbers = this@toContact.phoneNumbers,
-    addresses = this@toContact.addresses,
-    groups = this@toContact.groups
+    addresses = this@toContact.addresses
 )
 
 fun EditContactRequest.toContact() = Contact(
@@ -23,8 +23,7 @@ fun EditContactRequest.toContact() = Contact(
     lastName = this@toContact.lastName,
     emails = this@toContact.emails,
     phoneNumbers = this@toContact.phoneNumbers,
-    addresses = this@toContact.addresses,
-    groups = this@toContact.groups
+    addresses = this@toContact.addresses
 )
 
 class AddContactCommand(
@@ -53,17 +52,25 @@ class EditContactCommand(
     }
 }
 
-class SearchContactCommand(
+class FetchContactCommand(
+    val cmdCtx: CommandContext,
+    private val contactId: UUID
+): Command {
+    override fun execute(): Contact {
+        return Storage.fetchContactInTable(contactId)
+    }
+}
+/*class SearchContactCommand(
     private val query: String
 ): Command {
     override fun execute(): List<Contact> {
         return Storage.searchContacts(query)
     }
 
-}
+}*/
 
-class ShowContactCommand: Command {
+/*class ShowContactCommand: Command {
     override fun execute(): Collection<Contact> {
         return Storage.showContacts()
     }
-}
+}*/

@@ -1,5 +1,3 @@
-package com.addressBook
-
 import org.jetbrains.exposed.sql.Database
 
 data class AppContext(

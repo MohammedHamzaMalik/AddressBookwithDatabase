@@ -1,6 +1,7 @@
 package com.addressBook.commands
 
-import com.addressBook.CommandContext
+
+import CommandContext
 import com.addressBook.requests.AddGroupMemberRequest
 import com.addressBook.requests.DeleteGroupMemberRequest
 import com.commandPattern.addressBook.storages.Storage

@@ -8,7 +8,6 @@ data class Contact(
     val lastName: String,
     val emails: MutableMap<String, String>,
     val phoneNumbers: MutableMap<String, String>,
-    val addresses: MutableMap<String, String>,
-    val groups: MutableList<String>
+    val addresses: MutableMap<String, String>
 )
 
