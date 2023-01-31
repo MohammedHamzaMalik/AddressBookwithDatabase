@@ -1,14 +1,19 @@
-package com.addressBook
+package com.addressBook.testFiles
 
+import com.addressBook.AppTest
 import com.addressBook.entryPoints.addContact
 import com.addressBook.entryPoints.deleteContact
 import com.addressBook.entryPoints.editContact
 import com.addressBook.entryPoints.fetchContact
+import com.addressBook.getAddContactRequest
+import com.addressBook.getEditContactRequest
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 
 class ContactTest: AppTest() {
 
+    @Order(1)
     @Test
     fun `add contact`() {
         val req = getAddContactRequest()
@@ -22,6 +27,7 @@ class ContactTest: AppTest() {
         Assertions.assertTrue(contactResponse.addresses.containsValue("ST"))
     }
 
+    @Order(2)
     @Test
     fun `fetch contact`() {
         val req = getAddContactRequest()
@@ -32,6 +38,7 @@ class ContactTest: AppTest() {
         Assertions.assertEquals("Hamza", fetchContactResponse.firstName)
     }
 
+    @Order(3)
     @Test
     fun `edit contact`() {
 
@@ -44,6 +51,7 @@ class ContactTest: AppTest() {
         Assertions.assertEquals("Mohammed Hamza", editedContactRequest.firstName)
     }
 
+    @Order(4)
     @Test
     fun `delete contact`() {
         val req = getAddContactRequest()

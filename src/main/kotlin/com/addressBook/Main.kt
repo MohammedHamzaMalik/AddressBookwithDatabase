@@ -1,8 +1,10 @@
-package com.commandPattern.addressBook
+package com.addressBook
 
 
 import AppContext
+import arrow.core.Either
 import com.addressBook.connectToDatabase
+import com.addressBook.dataClasses.Group
 import com.addressBook.entryPoints.*
 import com.addressBook.requests.AddGroupMemberRequest
 import com.commandPattern.addressBook.requests.AddContactRequest
@@ -10,6 +12,7 @@ import com.addressBook.requests.AddGroupRequest
 import com.addressBook.requests.DeleteGroupMemberRequest
 import com.addressBook.requests.EditGroupRequest
 import com.addressBook.resetDatabase
+import com.commandPattern.addressBook.dataClasses.Contact
 import com.commandPattern.addressBook.requests.EditContactRequest
 
 
@@ -63,11 +66,11 @@ fun main(args: Array<String>) {
 
 
     println("------------------------Contact Deleted--------------------------")
-    val deleteContact = deleteContact(
+    val deletedContact = deleteContact(
         AppContext(dbConnection),
         hamza.contactId
     )
-    println(deleteContact)
+    println(deletedContact)
     println()
 
 
@@ -93,7 +96,8 @@ fun main(args: Array<String>) {
         AppContext(dbConnection),
         zayn.contactId
     )
-//    println(fetchedContact)
+    println(fetchedContact)
+    println()
 
 
     println("----------------------------Groups Added----------------------------")
@@ -124,11 +128,11 @@ fun main(args: Array<String>) {
 
 
     println("------------------------Group Deleted--------------------------")
-    val deleteGroup = deleteGroup(
+    val deletedGroup = deleteGroup(
         AppContext(dbConnection),
         vayana.groupId
     )
-    println(deleteContact)
+    println(deletedGroup)
     println()
 
 

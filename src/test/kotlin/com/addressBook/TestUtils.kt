@@ -1,9 +1,6 @@
 package com.addressBook
 
-import com.addressBook.requests.AddGroupMemberRequest
-import com.addressBook.requests.AddGroupRequest
-import com.addressBook.requests.EditGroupRequest
-import com.commandPattern.addressBook.commands.DeleteContactCommand
+import com.addressBook.requests.*
 import com.commandPattern.addressBook.requests.AddContactRequest
 import com.commandPattern.addressBook.requests.EditContactRequest
 import java.util.*
@@ -11,6 +8,16 @@ import java.util.*
 fun getAddContactRequest(): AddContactRequest {
     val contact = AddContactRequest(
         "Hamza","Malik",
+        mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
+        mutableMapOf("work" to "+91 123","home" to "+91 234"),
+        mutableMapOf("HOME" to "ST","WORK" to "BRC")
+    )
+    return contact
+}
+
+fun getAddContactRequest2(): AddContactRequest {
+    val contact = AddContactRequest(
+        "Vishesh","Modi",
         mutableMapOf("work" to "work@gmail.com","home" to "home@gmail.com"),
         mutableMapOf("work" to "+91 123","home" to "+91 234"),
         mutableMapOf("HOME" to "ST","WORK" to "BRC")
@@ -32,10 +39,30 @@ fun getAddGroupRequest(): AddGroupRequest {
     return AddGroupRequest("Vayana")
 }
 
+fun getAddGroupRequest2(): AddGroupRequest {
+    return AddGroupRequest("PDPU")
+}
+
 fun getEditGroupRequest(): EditGroupRequest {
     return EditGroupRequest(UUID.randomUUID(),"Vayana Interns")
 }
 
-fun getAddGroupMemberRequest(): AddGroupMemberRequest {
-    return AddGroupMemberRequest(UUID.randomUUID(),UUID.randomUUID())
+fun getAddGroupMemberRequest(groupId: UUID, contactId: UUID): AddGroupMemberRequest {
+    return AddGroupMemberRequest(groupId, contactId)
+}
+
+fun getDeleteGroupMemberRequest(groupId: UUID, contactId: UUID): DeleteGroupMemberRequest {
+    return DeleteGroupMemberRequest(groupId, contactId)
+}
+
+fun getFetchGroupMemberRequest(groupId: UUID, contactId: UUID): FetchGroupMemberRequest {
+    return FetchGroupMemberRequest(groupId, contactId)
+}
+
+fun getConnectContactwithGroupsRequest(contactId: UUID, groupIds: List<UUID>): ConnectContactwithGroupsRequest {
+    return ConnectContactwithGroupsRequest(contactId, groupIds)
+}
+
+fun getConnectGroupwithContactsRequest(groupId: UUID, contactIds: List<UUID>): ConnectGroupwtihContactsRequest {
+    return ConnectGroupwtihContactsRequest(groupId, contactIds)
 }

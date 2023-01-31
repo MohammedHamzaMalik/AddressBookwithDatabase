@@ -9,7 +9,7 @@ object Groups: Table("groups") {
     override val primaryKey = PrimaryKey(groupId, name = "PK_Group_ID")
 }
 
-object GroupMembers: Table("group_members") {
+object AllGroupMembers: Table("group_members") {
     val groupMemberId = uuid("group_member_id").autoGenerate()
     val groupId = (uuid("group_id") references Groups.groupId).index()
     val contactId = (uuid("contact_id") references Contacts.contactId).index()

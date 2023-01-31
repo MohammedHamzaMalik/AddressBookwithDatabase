@@ -2,10 +2,11 @@ package com.addressBook.commands
 
 
 import CommandContext
+import arrow.core.Either
 import com.addressBook.dataClasses.Group
+import com.addressBook.repo.*
 import com.addressBook.requests.AddGroupRequest
 import com.addressBook.requests.EditGroupRequest
-import com.commandPattern.addressBook.storages.Storage
 import java.util.*
 
 fun AddGroupRequest.toGroup() = Group(
@@ -22,15 +23,15 @@ class AddGroupCommand(
     val cmdCtx: CommandContext,
     private val request: AddGroupRequest
 ): Command {
-    override fun execute(): Group = Storage.addGroupInTable(request.toGroup())
+    override fun execute(): Either<Exception, Group> = GroupRepo.addGroupInTable(request.toGroup())
 }
 
 class DeleteGroupCommand(
     val cmdCtx: CommandContext,
     private val groupId: UUID
 ): Command {
-    override fun execute(): String {
-        return Storage.deleteGroupInTable(groupId)
+    override fun execute(): Either<Exception, String> {
+        return GroupRepo.deleteGroupInTable(groupId)
     }
 
 }
@@ -40,8 +41,8 @@ class EditGroupCommand(
     private val groupId: UUID,
     private val request: EditGroupRequest
 ): Command {
-    override fun execute(): String {
-        return Storage.editGroupInTable(groupId, request.toGroup())
+    override fun execute(): Either<Exception, String> {
+        return GroupRepo.editGroupInTable(groupId, request.toGroup())
     }
 }
 
@@ -49,23 +50,7 @@ class FetchGroupCommand(
     val cmdCtx: CommandContext,
     private val groupId: UUID
 ): Command {
-    override fun execute(): Group {
-        return Storage.fetchGroupInTable(groupId)
+    override fun execute(): Either<Exception, Group> {
+        return GroupRepo.fetchGroupInTable(groupId)
     }
 }
-/*
-class ShowGroupsCommand: Command {
-    override fun execute(): Collection<Group> {
-        return Storage.showGroups()
-    }
-
-}
-*/
-
-/*
-class SearchGroupCommand(
-    private val query: String
-): Command {
-    override fun execute(): List<Group> = Storage.searchGroups(query)
-}
-*/

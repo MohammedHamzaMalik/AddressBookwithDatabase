@@ -1,0 +1,28 @@
+{
+  "configuration": {
+    "name": "Default",
+    "properties": {
+      "property": [
+        {
+          "name": "log-pattern",
+          "value": "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+        }
+      ]
+    },
+    "appenders": {
+      "Console": {
+        "name": "Console-Appender",
+        "target": "SYSTEM_OUT",
+        "PatternLayout": {
+          "pattern": "${log-pattern}"
+        }
+      }
+    },
+    "loggers": {
+      "root": {
+        "level": "INFO",
+        "appender-ref": { "ref": "Console-Appender" }
+      }
+    }
+  }
+}

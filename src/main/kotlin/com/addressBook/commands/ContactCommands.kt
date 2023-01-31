@@ -1,11 +1,11 @@
-package com.commandPattern.addressBook.commands
+package com.addressBook.commands
 
 
 import CommandContext
-import com.addressBook.commands.Command
+import arrow.core.Either
+import com.addressBook.repo.*
 import com.commandPattern.addressBook.dataClasses.Contact
 import com.commandPattern.addressBook.requests.*
-import com.commandPattern.addressBook.storages.Storage
 import java.util.UUID
 
 fun AddContactRequest.toContact() = Contact(
@@ -30,15 +30,15 @@ class AddContactCommand(
     val cmdCtx: CommandContext,
     private val requests: AddContactRequest
 ): Command {
-    override fun execute(): Contact = Storage.addContactInTable(requests.toContact())
+    override fun execute(): Either<Exception, Contact> = ContactRepo.addContactInTable(requests.toContact())
 }
 
 class DeleteContactCommand(
     val cmdCtx: CommandContext,
     private val contactId: UUID
 ): Command {
-    override fun execute(): String {
-        return Storage.deleteContactInTable(contactId)
+    override fun execute(): Either<Exception, String> {
+        return ContactRepo.deleteContactInTable(contactId)
     }
 }
 
@@ -47,8 +47,8 @@ class EditContactCommand(
     private val contactId: UUID,
     private val requests: EditContactRequest
 ): Command {
-    override fun execute(): String {
-        return Storage.editContactInTable(contactId, requests.toContact())
+    override fun execute(): Either<Exception, String> {
+        return ContactRepo.editContactInTable(contactId, requests.toContact())
     }
 }
 
@@ -56,21 +56,7 @@ class FetchContactCommand(
     val cmdCtx: CommandContext,
     private val contactId: UUID
 ): Command {
-    override fun execute(): Contact {
-        return Storage.fetchContactInTable(contactId)
+    override fun execute(): Either<Exception, Contact> {
+        return ContactRepo.fetchContactInTable(contactId)
     }
 }
-/*class SearchContactCommand(
-    private val query: String
-): Command {
-    override fun execute(): List<Contact> {
-        return Storage.searchContacts(query)
-    }
-
-}*/
-
-/*class ShowContactCommand: Command {
-    override fun execute(): Collection<Contact> {
-        return Storage.showContacts()
-    }
-}*/

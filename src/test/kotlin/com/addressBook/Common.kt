@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun connectToDatabase(): Database =
+internal fun connectToDatabase(): Database =
     Database.connect(
         HikariDataSource().apply {
             jdbcUrl = "jdbc:mysql://localhost:3306/address_book"
@@ -18,13 +18,13 @@ fun connectToDatabase(): Database =
         }
     )
 
-val schema = listOf<Table>(
+internal val schema = listOf<Table>(
     Contacts,
     PhoneNumbers,
     Emails,
     Addresses,
     Groups,
-    GroupMembers
+    AllGroupMembers
 )
 
 fun resetDatabase() {
